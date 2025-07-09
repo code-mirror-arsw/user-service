@@ -25,8 +25,21 @@
 		<!-- Web -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
+			<artifactId>spring-boot-starter-webflux</artifactId>
 		</dependency>
+
+
+		<dependency>
+			<groupId>org.apache.pdfbox</groupId>
+			<artifactId>pdfbox</artifactId>
+			<version>3.0.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+		</dependency>
+
 
 		<!-- JPA -->
 		<dependency>
@@ -55,10 +68,10 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<!-- OpenAPI / Swagger -->
+		<!-- Swagger/OpenAPI para WebFlux -->
 		<dependency>
 			<groupId>org.springdoc</groupId>
-			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<artifactId>springdoc-openapi-starter-webflux-ui</artifactId>
 			<version>2.3.0</version>
 		</dependency>
 

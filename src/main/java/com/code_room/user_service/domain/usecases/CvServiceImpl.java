@@ -3,6 +3,7 @@ package com.code_room.user_service.domain.usecases;
 import com.code_room.user_service.domain.Enum.Role;
 import com.code_room.user_service.domain.Exception.CvUploadException;
 import com.code_room.user_service.domain.mapper.userMapper.UserMapper;
+import com.code_room.user_service.domain.ports.CvProcessingService;
 import com.code_room.user_service.domain.ports.CvService;
 import com.code_room.user_service.infrastructure.repository.UserRepository;
 import com.code_room.user_service.infrastructure.repository.cvRepository.CvRepository;
@@ -26,6 +27,9 @@ public class CvServiceImpl implements CvService {
     @Autowired
     UserMapper userMapper;
 
+    @Autowired
+    CvProcessingService cvProcessingService;
+
     @Override
     public void uploadUriCvFile(MultipartFile cvFile, String userId) throws IOException {
         validateFile(cvFile);
@@ -39,6 +43,8 @@ public class CvServiceImpl implements CvService {
 
         CvDto cvDto = new CvDto(cvFile, entity, cvFile.getName());
         cvRepository.createCv(cvDto);
+
+        cvProcessingService.processCvAndGenerateProfile(userId,cvFile);
     }
 
     @Override

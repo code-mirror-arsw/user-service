@@ -24,6 +24,9 @@ public class UserEntity {
     private String password;
     private String identification;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private PublicProfileEntity publicProfile;
+
     @Enumerated(EnumType.STRING)
     private Role role;
 
