@@ -12,6 +12,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.io.RandomAccessRead;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,14 +27,13 @@ import java.util.Map;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor // 1. Mejor práctica: Inyección por constructor
+@RequiredArgsConstructor
 public class CvProcessingServiceImpl implements CvProcessingService {
 
-    // Las dependencias son 'final' para garantizar la inmutabilidad
     private final WebClient openAIWebClient;
     private final UserRepository userRepository;
     private final PublicProfileRepository publicProfileRepository;
-    private final ObjectMapper objectMapper; // 2. Inyectamos ObjectMapper para parsear JSON
+    private final ObjectMapper objectMapper;
 
     @Value("${openai.api.model}")
     private String openApiModel;
@@ -43,7 +43,6 @@ public class CvProcessingServiceImpl implements CvProcessingService {
         String cvText = extractTextFromPdf(cvFile);
         String prompt = buildPrompt(cvText);
 
-        // .block() convierte la llamada asíncrona en síncrona para este flujo.
         PublicProfileDto profileDto = callOpenAiApi(prompt).block();
 
         if (profileDto != null) {
@@ -53,8 +52,19 @@ public class CvProcessingServiceImpl implements CvProcessingService {
         return profileDto;
     }
 
+    /**
+     * Extrae el texto de un archivo PDF.
+     * Esta es la implementación correcta que reemplaza el "return 'hola';".
+     * @param file El archivo MultipartFile que contiene el PDF.
+     * @return El texto extraído del PDF.
+     * @throws IOException Si ocurre un error al leer el archivo.
+     */
     private String extractTextFromPdf(MultipartFile file) throws IOException {
-        return "hola";
+        // Usamos un try-with-resources para asegurar que el documento se cierre correctamente.
+        try (PDDocument document = Loader.loadPDF((RandomAccessRead) file.getInputStream())) {
+            PDFTextStripper stripper = new PDFTextStripper();
+            return stripper.getText(document);
+        }
     }
 
     private String buildPrompt(String cvText) {
@@ -87,12 +97,11 @@ public class CvProcessingServiceImpl implements CvProcessingService {
                 .bodyValue(requestBody)
                 .retrieve()
                 .bodyToMono(Map.class)
-                .map(this::parseOpenApiResponse); // 3. Lógica de parseo extraída a un método limpio
+                .map(this::parseOpenApiResponse);
     }
 
     private PublicProfileDto parseOpenApiResponse(Map<String, Object> responseMap) {
         try {
-            // Navegamos de forma segura por la estructura de la respuesta de OpenAI
             List<Map<String, Object>> choices = (List<Map<String, Object>>) responseMap.get("choices");
             if (choices == null || choices.isEmpty()) {
                 throw new IllegalStateException("La respuesta de OpenAI no contiene 'choices'.");
@@ -100,7 +109,6 @@ public class CvProcessingServiceImpl implements CvProcessingService {
             Map<String, Object> message = (Map<String, Object>) choices.get(0).get("message");
             String jsonContent = (String) message.get("content");
 
-            // Usamos ObjectMapper para convertir el string JSON a nuestro DTO de forma segura
             return objectMapper.readValue(jsonContent, PublicProfileDto.class);
         } catch (JsonProcessingException e) {
             log.error("Error al parsear el JSON de la respuesta de OpenAI", e);

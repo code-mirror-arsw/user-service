@@ -2,25 +2,26 @@ package com.code_room.user_service.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
-import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
-import org.springframework.web.cors.reactive.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 import java.util.List;
 
 @Configuration
-@EnableWebFluxSecurity
+@EnableWebSecurity
 public class SecurityConfig {
 
     @Bean
-    public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(ServerHttpSecurity.CsrfSpec::disable)
-                .authorizeExchange(ex -> ex.anyExchange().permitAll())
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()));
+
         return http.build();
     }
 
