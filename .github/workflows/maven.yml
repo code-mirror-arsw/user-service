@@ -40,16 +40,19 @@ jobs:
           script: |
             echo "🛑 Killing any process on port 8081..."
             fuser -k 8081/tcp || true
-
+            
             echo "🧹 Removing previous .jar..."
             rm -f /opt/userService/user-service-0.0.1-SNAPSHOT.jar
-
+            
+            echo "📦 Moving .jar from target/ to root of /opt/userService/"
+            mv /opt/userService/target/user-service-0.0.1-SNAPSHOT.jar /opt/userService/user-service-0.0.1-SNAPSHOT.jar
+            
             echo "📂 Making sure log directory exists..."
             mkdir -p /home/${USER}/logs
-
+            
             echo "🚀 Starting application with nohup..."
             nohup java -jar /opt/userService/user-service-0.0.1-SNAPSHOT.jar > /home/${USER}/logs/user.log 2>&1 &
-
+            
             echo "📄 Showing last 50 lines of log..."
             sleep 5
             tail -n 50 /home/${USER}/logs/user.log
