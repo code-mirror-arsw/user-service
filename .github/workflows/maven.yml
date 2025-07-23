@@ -27,7 +27,7 @@ jobs:
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          password: ${{ secrets.SERVER_PASSWORD }}
           source: target/user-service-0.0.1-SNAPSHOT.jar
           target: /opt/userService/
 
@@ -36,9 +36,9 @@ jobs:
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          password: ${{ secrets.SERVER_PASSWORD }}
           script: |
             echo "Killing old process..."
             pkill -f 'user-service' || true
             echo "Starting new process..."
-            nohup java -jar /opt/userService/user-service-0.0.1-SNAPSHOT.jar > /home/arsw20251/logs/user.log 2>&1 &
+            nohup java -jar /opt/userService/user-service-0.0.1-SNAPSHOT.jar > /home/${{ secrets.SERVER_USER }}/logs/user.log 2>&1 &
