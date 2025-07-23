@@ -149,6 +149,10 @@ Para ver todos los endpoints de la API de manera interactiva, puedes acceder a l
 
 Esto te permitirá ver todos los métodos disponibles, sus parámetros y probar las API directamente desde el navegador.
 
+## este esta cubierto por sonarquebe
+
+<img width="1008" height="185" alt="image" src="https://github.com/user-attachments/assets/fb4fa62b-57a5-4c90-9f04-91e8c3bbe081" />
+
 
 ## diagram de clases
 
