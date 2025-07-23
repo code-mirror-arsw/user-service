@@ -33,8 +33,8 @@ public class UserEntity {
     @Column(name = "verification_code")
     private String verificationCode;
 
-    @Column(name = "enabled")
-    private boolean enabled = false;
+    @Column(nullable = false)
+    private Boolean enabled;
 
     @Column(name = "uri_cv_file")
     private String uriCvFile;

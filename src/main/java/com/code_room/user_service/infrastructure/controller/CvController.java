@@ -1,6 +1,7 @@
 package com.code_room.user_service.infrastructure.controller;
 
 import com.code_room.user_service.domain.ports.CvService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ public class CvController {
     @Autowired
     private CvService cvService;
 
+    @Operation(summary = "Upload a CV file for a user")
     @PostMapping("/upload/{userId}")
     public ResponseEntity<?> uploadCv(@RequestParam("file") MultipartFile multipartFile,
                                       @PathVariable("userId") String userId) {
@@ -34,6 +36,7 @@ public class CvController {
         }
     }
 
+    @Operation(summary = "Download a user's CV file")
     @GetMapping("/{userId}")
     public ResponseEntity<?> downloadCv(@PathVariable("userId") String userId) {
         try {
@@ -49,6 +52,7 @@ public class CvController {
         }
     }
 
+    @Operation(summary = "Delete a user's CV file")
     @DeleteMapping("/{userId}")
     public ResponseEntity<?> deleteCv(@PathVariable("userId") String userId) {
         try {
@@ -59,6 +63,7 @@ public class CvController {
         }
     }
 
+    @Operation(summary = "Update a user's CV file")
     @PutMapping("/update/{userId}")
     public ResponseEntity<?> updateCv(@RequestParam("file") MultipartFile multipartFile,
                                       @PathVariable("userId") String userId) {
